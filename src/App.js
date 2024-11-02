@@ -321,50 +321,61 @@ function App() {
                                         );
                                     }}
                                 >
-                                    <p>Which tags should be included?</p>
-                                    <div></div>
-                                    <div hidden={tags.length !== 0}>
-                                        <div
-                                            className="alert alert-info"
-                                            role="alert"
-                                        >
-                                            Please create tags before
-                                            downloading a calendar.
+                                    <div className="mb-3">
+                                        <p>Which labels should be included?</p>
+                                        <div hidden={tags.length !== 0}>
+                                            <div
+                                                className="alert alert-info"
+                                                role="alert"
+                                            >
+                                                Please create tags before
+                                                downloading a calendar.
+                                            </div>
+                                        </div>
+                                        <div className="mb-3">
+                                            {tags.map((t) => (
+                                                <div
+                                                    key={t}
+                                                    className="form-check"
+                                                >
+                                                    <input
+                                                        id={"tag-checkbox-" + t}
+                                                        type="checkbox"
+                                                        className="form-check-input"
+                                                    ></input>
+                                                    <label
+                                                        className="form-check-label"
+                                                        htmlFor={
+                                                            "tag-checkbox-" + t
+                                                        }
+                                                    >
+                                                        {t}
+                                                    </label>
+                                                </div>
+                                            ))}
                                         </div>
                                     </div>
-                                    <div className="mb-3">
-                                        {tags.map((t) => (
-                                            <div key={t} className="form-check">
-                                                <input
-                                                    id={"tag-checkbox-" + t}
-                                                    type="checkbox"
-                                                    className="form-check-input"
-                                                ></input>
-                                                <label
-                                                    className="form-check-label"
-                                                    htmlFor={
-                                                        "tag-checkbox-" + t
-                                                    }
-                                                >
-                                                    {t}
-                                                </label>
-                                            </div>
-                                        ))}
+                                    <div className="d-inline-flex gap-1">
+                                        <button
+                                            type="button"
+                                            disabled={tags.length === 0}
+                                            className="btn btn-primary"
+                                            value="Create calendar"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#exampleModal"
+                                        >
+                                            Create calendar
+                                        </button>
+                                        <button
+                                            type="button"
+                                            disabled={ready}
+                                            className="btn btn-outline-primary"
+                                            value="Download calendar"
+                                            onClick={() => handleDownload()}
+                                        >
+                                            Download calendar
+                                        </button>
                                     </div>
-                                    <input
-                                        disabled={tags.length === 0}
-                                        className="btn btn-primary"
-                                        type="submit"
-                                        value="Create calendar"
-                                        data-bs-toggle="modal"
-                                        data-bs-target="#exampleModal"
-                                    ></input>
-                                    <input
-                                        disabled={ready}
-                                        className="btn btn-outline-primary"
-                                        value="Download calendar"
-                                        onClick={() => handleDownload()}
-                                    ></input>
                                 </form>
                             </div>
                         </div>
