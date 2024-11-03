@@ -1,5 +1,8 @@
 import React, { useState } from "react";
 import ICAL from "ical.js";
+import TagEditor from "./TagEditor";
+import Toast from "react-bootstrap/Toast";
+import { ToastContainer } from "react-bootstrap";
 
 // Properties to object names mapping
 const Properties = {
@@ -16,11 +19,12 @@ const Properties = {
 
 function App() {
     const [files, setFiles] = useState({});
-    const [tags, setTags] = useState([]);
     const [tagsMap, setTagsMap] = useState({});
     const [calendar, setCalendar] = useState(null);
     const [ready, setReady] = useState(true);
     const [selectedTags, setSelectedTags] = useState([]);
+    const [showSuccess, setShowSuccess] = useState(false);
+    const [showFailure, setShowFailure] = useState(false);
 
     const handleFiles = (x) => {
         setFiles(x.target.files);
@@ -29,18 +33,20 @@ function App() {
     const handleTag = (x) => {
         x.preventDefault();
 
-        if (tags.includes(x.target.elements.tag.value)) {
+        if (Object.keys(tagsMap).includes(x.target.elements.tag.value)) {
+            setShowFailure(true);
             return;
         }
 
         const tag = x.target.elements.tag.value;
-        setTags([...tags, tag]);
         setTagsMap({
             ...tagsMap,
             [tag]: Object.keys(Properties).filter(
                 (p) => x.target.elements["prop-checkbox-" + p].checked
             )
         });
+
+        setShowSuccess(true);
     };
 
     const handleAggregation = async () => {
@@ -95,6 +101,32 @@ function App() {
 
     return (
         <div>
+            <ToastContainer position="top-center" className="position-fixed">
+                <Toast
+                    show={showSuccess}
+                    onClose={() => setShowSuccess(false)}
+                    style={{ marginTop: "1em" }}
+                    className="bg-success-subtle text-success"
+                    delay={5000}
+                    autohide
+                >
+                    <Toast.Body>Successfully added new tag!</Toast.Body>
+                </Toast>
+
+                <Toast
+                    show={showFailure}
+                    onClose={() => setShowFailure(false)}
+                    style={{ marginTop: "1em" }}
+                    className="bg-danger-subtle text-danger"
+                    delay={5000}
+                    autohide
+                >
+                    <Toast.Body>
+                        A tag with this name has already been created.
+                    </Toast.Body>
+                </Toast>
+            </ToastContainer>
+
             <div
                 className="modal fade"
                 id="exampleModal"
@@ -235,7 +267,7 @@ function App() {
                                 aria-expanded="false"
                                 aria-controls="collapseTwo"
                             >
-                                Step 2: Create Tags
+                                Step 2: Manage Tags
                             </button>
                         </h2>
                         <div
@@ -244,48 +276,136 @@ function App() {
                             data-bs-parent="#accordionExample"
                         >
                             <div className="accordion-body">
-                                <form onSubmit={(x) => handleTag(x)}>
-                                    <div className="form-floating mb-3">
-                                        <input
-                                            type="text"
-                                            className="form-control"
-                                            id="tag"
-                                            placeholder="High security"
-                                            required
-                                        />
-                                        <label htmlFor="tag">Tag name</label>
+                                <ul
+                                    className="nav nav-tabs"
+                                    id="myTab"
+                                    role="tablist"
+                                >
+                                    <li
+                                        className="nav-item"
+                                        role="presentation"
+                                    >
+                                        <button
+                                            className="nav-link active"
+                                            id="create-tag-tab"
+                                            data-bs-toggle="tab"
+                                            data-bs-target="#create-tag-tab-pane"
+                                            type="button"
+                                            role="tab"
+                                            aria-controls="create-tag-tab-pane"
+                                            aria-selected="true"
+                                        >
+                                            Create tag
+                                        </button>
+                                    </li>
+                                    <li
+                                        className="nav-item"
+                                        role="presentation"
+                                    >
+                                        <button
+                                            className="nav-link"
+                                            id="view-tags-tab"
+                                            data-bs-toggle="tab"
+                                            data-bs-target="#view-tags-tab-pane"
+                                            type="button"
+                                            role="tab"
+                                            aria-controls="view-tags-tab-pane"
+                                            aria-selected="false"
+                                        >
+                                            View tags
+                                        </button>
+                                    </li>
+                                </ul>
+                                <div className="tab-content" id="myTabContent">
+                                    <div
+                                        className="tab-pane fade show active"
+                                        id="create-tag-tab-pane"
+                                        role="tabpanel"
+                                        aria-labelledby="create-tag-tab"
+                                        tabIndex="0"
+                                    >
+                                        <div
+                                            className="container"
+                                            style={{ padding: "1em" }}
+                                        >
+                                            <form
+                                                onSubmit={(x) => handleTag(x)}
+                                            >
+                                                <div className="form-floating mb-3">
+                                                    <input
+                                                        type="text"
+                                                        className="form-control"
+                                                        id="tag"
+                                                        placeholder="High security"
+                                                        required
+                                                    />
+                                                    <label htmlFor="tag">
+                                                        Tag name
+                                                    </label>
+                                                </div>
+                                                <div className="row mb-3">
+                                                    <legend className="col-form-label">
+                                                        Which properties should
+                                                        the tag apply to?
+                                                    </legend>
+                                                    <div className="col">
+                                                        {Object.keys(
+                                                            Properties
+                                                        ).map((p) => (
+                                                            <div
+                                                                key={p}
+                                                                className="form-check"
+                                                            >
+                                                                <input
+                                                                    className="form-check-input"
+                                                                    id={
+                                                                        "prop-checkbox-" +
+                                                                        p
+                                                                    }
+                                                                    type="checkbox"
+                                                                ></input>
+                                                                <label
+                                                                    className="form-check-label"
+                                                                    htmlFor={
+                                                                        "prop-checkbox-" +
+                                                                        p
+                                                                    }
+                                                                >
+                                                                    {p}
+                                                                </label>
+                                                            </div>
+                                                        ))}
+                                                    </div>
+                                                </div>
+                                                <div className="d-inline-flex gap-1">
+                                                    <input
+                                                        className="btn btn-primary"
+                                                        type="submit"
+                                                        value="Add tag"
+                                                    ></input>
+                                                </div>
+                                            </form>
+                                        </div>
                                     </div>
-                                    <div className="mb-3">
-                                        <p>
-                                            Which properties should the tag
-                                            apply to?
-                                        </p>
-                                        {Object.keys(Properties).map((p) => (
-                                            <div key={p} className="form-check">
-                                                <input
-                                                    className="form-check-input"
-                                                    id={"prop-checkbox-" + p}
-                                                    type="checkbox"
-                                                ></input>
-                                                <label
-                                                    className="form-check-label"
-                                                    htmlFor={
-                                                        "prop-checkbox-" + p
-                                                    }
-                                                >
-                                                    {p}
-                                                </label>
-                                            </div>
-                                        ))}
+                                    <div
+                                        className="tab-pane fade"
+                                        id="view-tags-tab-pane"
+                                        role="tabpanel"
+                                        aria-labelledby="view-tags-tab"
+                                        tabIndex="0"
+                                    >
+                                        <div
+                                            className="container"
+                                            style={{ padding: "1em" }}
+                                        >
+                                            <TagEditor
+                                                options={Properties}
+                                                tags={tagsMap}
+                                                setTags={setTagsMap}
+                                            ></TagEditor>
+                                        </div>
                                     </div>
-                                    <div className="mb-3">
-                                        <input
-                                            className="btn btn-primary"
-                                            type="submit"
-                                            value="Add tag"
-                                        ></input>
-                                    </div>
-                                </form>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -312,7 +432,7 @@ function App() {
                                     onSubmit={(x) => {
                                         x.preventDefault();
                                         setSelectedTags(
-                                            tags.filter(
+                                            Object.keys(tagsMap).filter(
                                                 (t) =>
                                                     x.target.elements[
                                                         "tag-checkbox-" + t
@@ -321,9 +441,16 @@ function App() {
                                         );
                                     }}
                                 >
-                                    <div className="mb-3">
-                                        <p>Which labels should be included?</p>
-                                        <div hidden={tags.length !== 0}>
+                                    <fieldset className="row mb-3">
+                                        <legend className="col-form-label">
+                                            Which tags should be included?
+                                        </legend>
+                                        <div
+                                            hidden={
+                                                Object.keys(tagsMap).length !==
+                                                0
+                                            }
+                                        >
                                             <div
                                                 className="alert alert-info"
                                                 role="alert"
@@ -332,8 +459,8 @@ function App() {
                                                 downloading a calendar.
                                             </div>
                                         </div>
-                                        <div className="mb-3">
-                                            {tags.map((t) => (
+                                        <div className="col">
+                                            {Object.keys(tagsMap).map((t) => (
                                                 <div
                                                     key={t}
                                                     className="form-check"
@@ -354,11 +481,14 @@ function App() {
                                                 </div>
                                             ))}
                                         </div>
-                                    </div>
+                                    </fieldset>
                                     <div className="d-inline-flex gap-1">
                                         <button
-                                            type="button"
-                                            disabled={tags.length === 0}
+                                            type="submit"
+                                            disabled={
+                                                Object.keys(tagsMap).length ===
+                                                0
+                                            }
                                             className="btn btn-primary"
                                             value="Create calendar"
                                             data-bs-toggle="modal"
