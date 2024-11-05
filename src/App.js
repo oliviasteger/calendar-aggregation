@@ -1,8 +1,9 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import ICAL from "ical.js";
 import TagEditor from "./TagEditor";
 import Toast from "react-bootstrap/Toast";
 import { ToastContainer } from "react-bootstrap";
+import Cookies from "js-cookie";
 
 // Properties to object names mapping
 const Properties = {
@@ -18,8 +19,15 @@ const Properties = {
 };
 
 function App() {
+    const [useCookies, setUseCookies] = useState(
+        Cookies.get("calendarAggregationTags") !== undefined
+    );
     const [files, setFiles] = useState({});
-    const [tagsMap, setTagsMap] = useState({});
+    const [tagsMap, setTagsMap] = useState(
+        Cookies.get("calendarAggregationTags")
+            ? JSON.parse(Cookies.get("calendarAggregationTags"))
+            : {}
+    );
     const [calendar, setCalendar] = useState(null);
     const [ready, setReady] = useState(true);
     const [selectedTags, setSelectedTags] = useState([]);
@@ -98,6 +106,14 @@ function App() {
         link.click();
         document.body.removeChild(link);
     };
+
+    useEffect(() => {
+        if (!useCookies) {
+            Cookies.remove("calendarAggregationTags");
+        } else {
+            Cookies.set("calendarAggregationTags", JSON.stringify(tagsMap));
+        }
+    }, [useCookies, tagsMap]);
 
     return (
         <div>
@@ -187,15 +203,39 @@ function App() {
                 </div>
             </div>
 
-            <div
-                className="container"
-                style={{ paddingTop: "3em", paddingBottom: "2em" }}
-            >
+            <div className="container pt-5 pb-3">
                 <h1 className="text-primary">Calendar Aggregation Tool</h1>
                 <h5 className="text-secondary">🔐 Only share what you want</h5>
             </div>
 
-            <div className="container" style={{ paddingBottom: "3em" }}>
+            <div className="container">
+                <div className="alert alert-secondary" role="alert">
+                    <div className="form-check form-switch">
+                        <input
+                            className="form-check-input"
+                            type="checkbox"
+                            role="switch"
+                            id="persistTags"
+                            defaultChecked={
+                                Cookies.get("calendarAggregationTags")
+                                    ? true
+                                    : false
+                            }
+                            onClick={(x) => {
+                                setUseCookies(x.target.checked);
+                            }}
+                        />
+                        <label
+                            className="form-check-label text-secondary"
+                            htmlFor="persistTags"
+                        >
+                            Persist settings using cookies
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <div className="container pt-3 pb-5">
                 <div className="accordion" id="accordionExample">
                     <div className="accordion-item">
                         <h2 className="accordion-header">
