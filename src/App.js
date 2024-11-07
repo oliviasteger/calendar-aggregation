@@ -62,6 +62,11 @@ function App() {
         const props = [
             "dtstart",
             "dtend",
+            "tzid",
+            "tzname",
+            "tzoffsetfrom",
+            "tzoffsetto",
+            "tzurl",
             ...Object.keys(Properties)
                 .filter((p) => selectedTags.some((t) => tagsMap[t].includes(p)))
                 .map((p) => Properties[p])
@@ -174,6 +179,7 @@ function App() {
                             {[
                                 "start date",
                                 "end date",
+                                "time zone",
                                 ...Object.keys(Properties)
                                     .filter((p) =>
                                         selectedTags.some((t) =>
