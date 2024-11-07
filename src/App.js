@@ -73,9 +73,11 @@ function App() {
             const reader = new FileReader();
             reader.onload = async (e) => {
                 const text = e.target.result;
+                console.log(text);
                 const calData = ICAL.parse(text);
                 const calObject = new ICAL.Component(calData);
-                calObject.getAllSubcomponents().forEach((s) => {
+                calObject.getAllSubcomponents("vevent").forEach((s) => {
+                    console.log(s.getAllProperties());
                     const propertiesToRemove = s
                         .getAllProperties()
                         .filter((p) => !props.includes(p.name));
