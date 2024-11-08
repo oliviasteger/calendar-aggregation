@@ -1,12 +1,12 @@
 {
   "files": {
-    "main.js": "/calendar-aggregation/static/js/main.4eb81620.js",
+    "main.js": "/calendar-aggregation/static/js/main.71959439.js",
     "static/js/453.d9f967ff.chunk.js": "/calendar-aggregation/static/js/453.d9f967ff.chunk.js",
     "index.html": "/calendar-aggregation/index.html",
-    "main.4eb81620.js.map": "/calendar-aggregation/static/js/main.4eb81620.js.map",
+    "main.71959439.js.map": "/calendar-aggregation/static/js/main.71959439.js.map",
     "453.d9f967ff.chunk.js.map": "/calendar-aggregation/static/js/453.d9f967ff.chunk.js.map"
   },
   "entrypoints": [
-    "static/js/main.4eb81620.js"
+    "static/js/main.71959439.js"
   ]
 }
