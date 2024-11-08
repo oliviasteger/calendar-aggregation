@@ -78,11 +78,13 @@ function App() {
             const reader = new FileReader();
             reader.onload = async (e) => {
                 const text = e.target.result;
-                console.log(text);
                 const calData = ICAL.parse(text);
                 const calObject = new ICAL.Component(calData);
+                const timezone =
+                    calObject.getFirstPropertyValue("x-wr-timezone") ||
+                    undefined;
+
                 calObject.getAllSubcomponents("vevent").forEach((s) => {
-                    console.log(s.getAllProperties());
                     const propertiesToRemove = s
                         .getAllProperties()
                         .filter((p) => !props.includes(p.name));
@@ -90,6 +92,10 @@ function App() {
                     propertiesToRemove.forEach((p) => {
                         s.removeProperty(p);
                     });
+
+                    if (timezone) {
+                        s.addPropertyWithValue("tzname", timezone);
+                    }
 
                     newCalendar.addSubcomponent(s);
                 });
