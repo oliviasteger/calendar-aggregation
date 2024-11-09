@@ -93,11 +93,29 @@ function App() {
                         s.removeProperty(p);
                     });
 
+                    let sTimeAdjusted = s.toString();
+
                     if (timezone) {
-                        s.addPropertyWithValue("tzname", timezone);
+                        const isStartZone = sTimeAdjusted.includes("DTSTART;");
+                        if (!isStartZone) {
+                            sTimeAdjusted = sTimeAdjusted.replace(
+                                "DTSTART:",
+                                `DTSTART;TZID=${timezone}:`
+                            );
+                        }
+
+                        const isEndZone = sTimeAdjusted.includes("DTEND;");
+                        if (!isEndZone) {
+                            sTimeAdjusted = sTimeAdjusted.replace(
+                                "DTEND:",
+                                `DTEND;TZID=${timezone}:`
+                            );
+                        }
                     }
 
-                    newCalendar.addSubcomponent(s);
+                    newCalendar.addSubcomponent(
+                        new ICAL.Component(ICAL.parse(sTimeAdjusted))
+                    );
                 });
                 setCalendar(newCalendar.toString());
             };
