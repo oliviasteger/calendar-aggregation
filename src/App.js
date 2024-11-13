@@ -96,6 +96,7 @@ function App() {
                     let sTimeAdjusted = s.toString();
 
                     if (timezone) {
+                        console.log("timezone: ", timezone);
                         const isStartZone = sTimeAdjusted.includes("DTSTART;");
                         if (!isStartZone) {
                             sTimeAdjusted = sTimeAdjusted.replace(
@@ -324,6 +325,15 @@ function App() {
                                             Outlook Calendar
                                         </a>{" "}
                                         users.
+                                        
+                                    </div>
+
+                                    <div
+                                        id="fileHelpBlock"
+                                        className="form-text"
+                                    >
+                                    To upload multiple calendars at once: after clicking "Choose Files" multi-select all desired files.  
+
                                     </div>
                                 </div>
                             </div>
