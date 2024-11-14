@@ -336,15 +336,15 @@ function App() {
                                             Outlook Calendar
                                         </a>{" "}
                                         users.
-                                        
                                     </div>
 
                                     <div
                                         id="fileHelpBlock"
                                         className="form-text"
                                     >
-                                    To upload multiple calendars at once: after clicking "Choose Files" multi-select all desired files.  
-
+                                        To upload multiple calendars at once:
+                                        after clicking "Choose Files"
+                                        multi-select all desired files.
                                     </div>
                                 </div>
                             </div>
