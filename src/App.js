@@ -33,6 +33,7 @@ function App() {
     const [selectedTags, setSelectedTags] = useState([]);
     const [showSuccess, setShowSuccess] = useState(false);
     const [showFailure, setShowFailure] = useState(false);
+    const [fileName, setFileName] = useState(undefined);
 
     const handleFiles = (x) => {
         setFiles(x.target.files);
@@ -67,6 +68,12 @@ function App() {
             "tzoffsetfrom",
             "tzoffsetto",
             "tzurl",
+            "recurrence-id",
+            "exdate",
+            "rdate",
+            "rrule",
+            "repeat",
+            "range",
             ...Object.keys(Properties)
                 .filter((p) => selectedTags.some((t) => tagsMap[t].includes(p)))
                 .map((p) => Properties[p])
@@ -85,13 +92,19 @@ function App() {
                     undefined;
 
                 calObject.getAllSubcomponents("vevent").forEach((s) => {
-                    const propertiesToRemove = s
-                        .getAllProperties()
-                        .filter((p) => !props.includes(p.name));
+                    const propertiesToRemove = [
+                        ...s
+                            .getAllProperties()
+                            .filter((p) => !props.includes(p.name))
+                    ];
 
                     propertiesToRemove.forEach((p) => {
                         s.removeProperty(p);
                     });
+
+                    if (s.getFirstSubcomponent("valarm")) {
+                        s.removeAllSubcomponents("valarm");
+                    }
 
                     let sTimeAdjusted = s.toString();
                     let startIsOffset =
@@ -104,8 +117,6 @@ function App() {
                             .getFirstPropertyValue("dtend")
                             .toString()
                             .slice(-1) === "Z";
-
-                    console.log(startIsOffset, endIsOffset);
 
                     if (timezone) {
                         const isStartZone = sTimeAdjusted.includes("DTSTART;");
@@ -143,7 +154,7 @@ function App() {
         const link = document.createElement("a");
 
         link.href = url;
-        link.setAttribute("download", "screenedCalendar.ics");
+        link.setAttribute("download", `${fileName || "screenedCalendar"}.ics`);
 
         document.body.appendChild(link);
         link.click();
@@ -532,6 +543,10 @@ function App() {
                                                     ].checked
                                             )
                                         );
+                                        setFileName(
+                                            x.target.elements["file-name"]
+                                                .value || undefined
+                                        );
                                     }}
                                 >
                                     <fieldset className="row mb-3">
@@ -573,6 +588,19 @@ function App() {
                                                     </label>
                                                 </div>
                                             ))}
+                                        </div>
+                                    </fieldset>
+                                    <fieldset className="row mb-3">
+                                        <legend className="col-form-label">
+                                            What should the file be named?
+                                        </legend>
+                                        <div className="col">
+                                            <input
+                                                id="file-name"
+                                                className="form-control"
+                                                type="text"
+                                                placeholder="screenedCalendar.ics"
+                                            />
                                         </div>
                                     </fieldset>
                                     <div className="d-inline-flex gap-1">
