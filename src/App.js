@@ -94,10 +94,22 @@ function App() {
                     });
 
                     let sTimeAdjusted = s.toString();
+                    let startIsOffset =
+                        s
+                            .getFirstPropertyValue("dtstart")
+                            .toString()
+                            .slice(-1) === "Z";
+                    let endIsOffset =
+                        s
+                            .getFirstPropertyValue("dtend")
+                            .toString()
+                            .slice(-1) === "Z";
+
+                    console.log(startIsOffset, endIsOffset);
 
                     if (timezone) {
                         const isStartZone = sTimeAdjusted.includes("DTSTART;");
-                        if (!isStartZone) {
+                        if (!isStartZone && !startIsOffset) {
                             sTimeAdjusted = sTimeAdjusted.replace(
                                 "DTSTART:",
                                 `DTSTART;TZID=${timezone}:`
@@ -105,7 +117,7 @@ function App() {
                         }
 
                         const isEndZone = sTimeAdjusted.includes("DTEND;");
-                        if (!isEndZone) {
+                        if (!isEndZone && !endIsOffset) {
                             sTimeAdjusted = sTimeAdjusted.replace(
                                 "DTEND:",
                                 `DTEND;TZID=${timezone}:`
