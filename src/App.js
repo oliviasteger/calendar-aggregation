@@ -96,7 +96,6 @@ function App() {
                     let sTimeAdjusted = s.toString();
 
                     if (timezone) {
-                        console.log("timezone: ", timezone);
                         const isStartZone = sTimeAdjusted.includes("DTSTART;");
                         if (!isStartZone) {
                             sTimeAdjusted = sTimeAdjusted.replace(
