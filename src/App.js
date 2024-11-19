@@ -13,7 +13,6 @@ const Properties = {
     Organizer: "organizer",
     Attendee: "attendee",
     Attachments: "attach",
-    Comments: "comment",
     CreationDate: "created"
 };
 
