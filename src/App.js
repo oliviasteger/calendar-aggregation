@@ -10,7 +10,6 @@ const Properties = {
     Name: "summary",
     Location: "location",
     Description: "description",
-    Contact: "contact",
     Organizer: "organizer",
     Attendee: "attendee",
     Attachments: "attach",
