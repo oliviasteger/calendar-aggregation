@@ -599,7 +599,7 @@ function App() {
                                                 id="file-name"
                                                 className="form-control"
                                                 type="text"
-                                                placeholder="screenedCalendar.ics"
+                                                placeholder="screenedCalendar"
                                             />
                                         </div>
                                     </fieldset>
